@@ -10,11 +10,13 @@ import plotly.express as px
 import datetime
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+import os
 
 # from dotenv import load_dotenv, dotenv_values
 # config_vars = dotenv_values('config.env')
 # api_key = config_vars['api_key']
 
+api_key = os.getenv("api_key", "optional-default")
 # with open('..//alpha_apikey.txt.') as f:
 #     api_key = f.readlines()[0]
 
