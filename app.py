@@ -15,8 +15,8 @@ import plotly.graph_objects as go
 # config_vars = dotenv_values('config.env')
 # api_key = config_vars['api_key']
 
-with open('..//alpha_apikey.txt.') as f:
-    api_key = f.readlines()[0]
+# with open('..//alpha_apikey.txt.') as f:
+#     api_key = f.readlines()[0]
 
 @st.cache
 def get_data(ticker_select):
