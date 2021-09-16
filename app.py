@@ -11,13 +11,12 @@ import datetime
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-from dotenv import load_dotenv, dotenv_values
-config_vars = dotenv_values('config.env')
-api_key = config_vars['api_key']
+# from dotenv import load_dotenv, dotenv_values
+# config_vars = dotenv_values('config.env')
+# api_key = config_vars['api_key']
 
-ticker_select = st.sidebar.text_input('What ticker?', 'IBM')
-start_select = st.sidebar.date_input('Start Date', datetime.date(2021, 1, 1))
-end_select = st.sidebar.date_input('End Date', datetime.date(2021, 2, 1))
+with open('..//alpha_apikey.txt.') as f:
+    api_key = f.readlines()[0]
 
 @st.cache
 def get_data(ticker_select):
@@ -37,7 +36,33 @@ def filter_data(df, start_select, end_select):
     df = df.loc[(df['date']>=start_select.strftime('%Y-%m-%d')) & (df['date']<=end_select.strftime('%Y-%m-%d'))]
     return df
 
+def get_tickers(search_name):
+    url = 'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords='+search_name+'&apikey='+api_key
+    response = requests.get(url)
+    json_file = response.json()
+    ticker_list = [name['1. symbol'] for name in json_file['bestMatches']]
+    return ticker_list
+
+ticker_select = 'IBM'
+
+inputs = st.sidebar.text_input('Search Stock Prices', 'IBM')
+
+ticker_select = st.sidebar.selectbox(label = 'Select Stock',
+                                      key = 'selectbox1',
+                                      options = get_tickers(inputs))
+
+
+# ticker_select = st.sidebar.text_input('What ticker?', 'IBM')
+# start_select = st.sidebar.date_input('Start Date', datetime.date(2020, 1, 1))
+# end_select = st.sidebar.date_input('End Date', datetime.date(2021, 2, 1))
+current_date = datetime.date.today()
+year_back = current_date - datetime.timedelta(days=1*365)
+start_select = st.sidebar.date_input('Start Date', year_back)
+end_select = st.sidebar.date_input('End Date', current_date)
+
 test = filter_data(get_data(ticker_select), start_select, end_select)
+
+
 
 df1 = test.melt(id_vars=['date']+list(test.keys()[0:4]), var_name=ticker_select)
 
